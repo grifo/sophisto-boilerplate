@@ -4,20 +4,26 @@ path = require 'path'
 # disable minify in bundle
 # flour.minifiers['.js'] = (file, cb) -> cb file.buffer
 
-
 task 'build:scripts', ->
     bundle [
-        'source/scripts/backbone.js'
-    ], 'public/js/main.js'
+        'source/scripts/ender.min.js'
+    ], 'public/scripts/main.js'
+
 
 task 'build:stylus', ->
     compile 'source/stylus/main.styl', 'public/styles/main.css'
 
 
 task 'build', ->
-    invoke 'build:scripts'
-    invoke 'build:stylus'
+    ender = require 'ender'
+    cb = ->
+        invoke 'build:scripts'
+        invoke 'build:stylus'
 
+    ender.build [
+        'bonzo'
+    ], output: 'source/scripts/ender', cb
+        
 
 task 'watch', ->
     invoke 'build'
