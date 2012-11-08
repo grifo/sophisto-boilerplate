@@ -17,4 +17,4 @@ nbproject
 _site/
 
 # node
-nodemodules/
+node_modules/
