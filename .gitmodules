@@ -1,0 +1,3 @@
+[submodule "source/stylus/nib"]
+	path = source/stylus/nib
+	url = git://github.com/visionmedia/nib
