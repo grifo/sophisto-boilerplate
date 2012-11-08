@@ -1,0 +1,40 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+    Developers:
+    Site: gri.fo
+    Twitter: @grifotecnologia
+    Location: Porto Alegre, RS, Brasil
+
+/* SITE */
+      Standards: HTML5, CSS3
+      Components: Modernizr, jQuery
+      Software:
+
+
+                        gggggggggg
+                   gggggggggggggggggggg
+               gggggggggggggggggggggggggggg
+             gggggggggggggggggggggggggggggggg
+           gggggggggggggggggggggggggggggggggggg
+         gggggggggggggggggggggggggggggggggggggggg
+        ggggggggggggggggggg....ggggggggggggggggggg
+       gggggggggggggggggggg....gggggggggggggggggggg
+      gggggggggggggggggggggggggggggggggggggggggggggg
+     ggggggg....ggggggggggg....gggggggggggg....gggggg
+     ggggggg....ggggggggg........gggggggggg....gggggg
+     ggggggggg.gggggggg............gggggggg.ggggggggg
+     ggggggggg....ggg................ggg....ggggggggg
+     gggggggggg............................gggggggggg
+     gggggggggg............................gggggggggg
+     ggggggggggg..........................ggggggggggg
+      gggggggggg..........................gggggggggg
+       gggggggggg........................gggggggggg
+        gggggggggggggggggggggggggggggggggggggggggg
+         gggggggggggggggggggggggggggggggggggggggg
+           gggggggggggggggggggggggggggggggggggg
+             gggggggggggggggggggggggggggggggg
+               gggggggggggggggggggggggggggg
+                   gggggggggggggggggggg
+                        gggggggggg             Grifo

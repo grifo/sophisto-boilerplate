@@ -1,0 +1,11 @@
+{
+    "name": "GrifoSophistoBoilerplate",
+    "author": "Grifo",
+    "version": "0.1.0",
+    "devDependencies": {
+        "flour": "0.3.2",
+        "coffee-script": "1.4.0",
+        "stylus": "0.28.2",
+        "uglify-js": "1.3.4"
+    }
+}
