@@ -2,14 +2,22 @@
 
 @import "reset.styl"
 
+@viewport
+    width: device-width
+
+
+// http://dev.opera.com/articles/view/an-introduction-to-meta-viewport-and-viewport/
+@viewport {
+    width: devide-width
+}
+
 // -. .-. MIXINS & VARIABLES .-. .-.
 @import "mixins.styl"
 @import "variables.styl"
 
 // -. .-. SKIP LINKS .-. .-.
 #skiplinks
-    position: absolute
-    left: -9999px
+    vhidden()
 
 
 // -. .-. CORE .-. .-.
