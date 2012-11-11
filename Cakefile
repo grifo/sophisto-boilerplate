@@ -4,7 +4,7 @@ ender = require 'ender'
 task 'dev', ->
     # disable the js minifier
     flour.minifiers.js = null
-
+    flour.compilers.styl.compress = false
 
 task 'build:scripts', ->
     bundle [
