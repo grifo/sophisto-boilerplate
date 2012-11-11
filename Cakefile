@@ -5,11 +5,10 @@ ender = require 'ender'
 task 'deploy', (opts) ->
     require('child_process').exec """
         git branch -D gh-pages
-        git checkout -b gh-pages
-        mv public deploy
-        git rm -rf .
-        mv deploy/* .
-        rm -rf node_modules deploy
+        git checkout --orphan gh-pages
+        git checkout master public
+        mv -rf public/* .
+        rm -rf public
         git add .
         git commit -m "deploy"
         git push origin gh-pages
