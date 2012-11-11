@@ -6,11 +6,13 @@ task 'deploy', (opts) ->
     require('child_process').exec """
         git branch -D gh-pages
         git checkout -b gh-pages
-        cp -Rf public deploy
+        mv public deploy
         git rm -rf .
-        cp -R deploy .
-        rm -rf node_modules
-        git commit -am "deploy"
+        mv deploy/* .
+        rm -rf node_modules deploy
+        git add .
+        git commit -m "deploy"
+        git push origin gh-pages
         git checkout master
     """, (error, stdout, stderr) -> 
         console.log stdout
