@@ -1,3 +1,3 @@
-# Grifo Sophisto Boilerplate
+# Sophisto Boilerplate
 
 [developing] template for modern browsers.
