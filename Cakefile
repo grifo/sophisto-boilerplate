@@ -1,10 +1,11 @@
 flour = require 'flour'
-ender = require 'ender'
+
 
 task 'dev', ->
     # disable the js minifier
     flour.minifiers.js = null
     flour.compilers.styl.compress = false
+
 
 task 'build:scripts', ->
     bundle [
@@ -19,7 +20,7 @@ task 'build:styles', ->
 
 task 'build', ->
     # https://github.com/ender-js/Ender/wiki/Ender-package-list
-    ender.build [
+    (require 'ender').build [
         'bonzo'     # DOM utility
         'bean'      # event manager
         'domready'  # DOM ready
