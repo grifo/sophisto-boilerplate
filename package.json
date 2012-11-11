@@ -1,12 +1,28 @@
 {
-    "name": "GrifoSophistoBoilerplate",
-    "author": "Grifo",
+    "name": "sophisto-boilerplate",
+    "title": "Sophisto Boilerplate",
     "version": "0.1.0",
-    "devDependencies": {
-        "flour": "0.3.2",
+    "description": "Template for modern browsers",
+    "author": {
+        "name": "Grifo",
+        "url": "http://gri.fo"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/grifo/sophisto-boilerplate/blob/master/LICENSE.md"
+        }
+    ],
+    "dependencies": {
         "coffee-script": "1.4.0",
+        "flour": "git://github.com/jcemer/cake-flour",
+        "ender": "0.8.11",
+        "nib": "0.7.0",
         "stylus": "git://github.com/grifo/stylus",
-        "uglify-js": "1.3.4",
-        "ender": "0.8.11"
+        "uglify-js": "1.3.4"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:grifo/sophisto-boilerplate"
     }
 }
