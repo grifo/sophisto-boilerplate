@@ -21,3 +21,6 @@ _site/
 
 # node
 node_modules/
+
+# deploy
+deploy/
