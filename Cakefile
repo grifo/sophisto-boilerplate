@@ -13,7 +13,7 @@ task 'build:scripts', ->
     ], 'public/scripts/main.js'
 
 
-task 'build:stylus', ->
+task 'build:styles', ->
     compile 'source/stylus/main.styl', 'public/styles/main.css'
 
 
@@ -26,7 +26,7 @@ task 'build', ->
     ], output: 'source/scripts/ender', -> 
         invoke 'build:scripts'
 
-    invoke 'build:stylus'
+    invoke 'build:styles'
 
 
 task 'watch', ->
@@ -39,4 +39,4 @@ task 'watch', ->
         invoke 'build:scripts'
 
     watch 'source/stylus/*.styl', -> 
-        invoke 'build:stylus'
+        invoke 'build:styles'
