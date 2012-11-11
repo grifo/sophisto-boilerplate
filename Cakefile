@@ -1,21 +1,6 @@
 flour = require 'flour'
 ender = require 'ender'
 
-
-task 'deploy', (opts) ->
-    require('child_process').exec """
-        git branch -D gh-pages
-        git checkout --orphan gh-pages
-        git checkout master public
-        mv -rf public/* .
-        rm -rf public
-        git add .
-        git commit -m "deploy"
-        git push origin gh-pages
-        git checkout master
-    """, (error, stdout, stderr) -> 
-        console.log stdout
-
 task 'dev', ->
     # disable the js minifier
     flour.minifiers.js = null
