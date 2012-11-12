@@ -8,7 +8,7 @@
 /*!
   * Ender: open module JavaScript framework (client-lib)
   * copyright Dustin Diaz & Jacob Thornton 2011-2012 (@ded @fat)
-  * http://ender.jit.su
+  * http://ender.no.de
   * License MIT
   */
 (function (context) {

@@ -10,13 +10,16 @@ task 'dev', ->
 task 'build:scripts', ->
     bundle [
         'source/scripts/ender.min.js'
-        'source/coffee/main.coffee'
+        'source/scripts/main.coffee'
     ], 'public/scripts/main.js'
 
 
 task 'build:styles', ->
-    compile 'source/stylus/main.styl', 'public/styles/main.css'
-
+    bundle [
+        'source/styles/reset.css'
+        'source/styles/main.styl'
+        'source/styles/print.css'
+    ], 'public/styles/main.css'
 
 task 'build', ->
     # https://github.com/ender-js/Ender/wiki/Ender-package-list
@@ -33,11 +36,8 @@ task 'build', ->
 task 'watch', ->
     invoke 'build'
 
-    watch 'source/coffee/*.coffee', -> 
+    watch 'source/scripts/', -> 
         invoke 'build:scripts'
 
-    watch 'source/scripts/*.js', -> 
-        invoke 'build:scripts'
-
-    watch 'source/stylus/*.styl', -> 
+    watch 'source/styles/', -> 
         invoke 'build:styles'
