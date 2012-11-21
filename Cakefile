@@ -9,7 +9,7 @@ task 'dev', ->
 
 task 'build:scripts', ->
     bundle [
-        'source/scripts/ender.min.js'
+        'source/scripts/ender.js'
         'source/scripts/main.coffee'
     ], 'public/scripts/main.js'
 
