@@ -55,12 +55,25 @@ input,select{vertical-align:middle;}
 .clearfix:after { clear: both; }
 /* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
 .clearfix { zoom: 1; }
-#skiplinks{position:absolute;left:-9999px}
-@-moz-viewport{width:device-width}
-@-webkit-viewport{width:device-width}
-@-o-viewport{width:device-width}
-@-ms-viewport{width:device-width}
-@viewport{width:device-width}
+#skiplinks {
+  position: absolute;
+  left: -9999px;
+}
+@-moz-viewport {
+  width: device-width;
+}
+@-webkit-viewport {
+  width: device-width;
+}
+@-o-viewport {
+  width: device-width;
+}
+@-ms-viewport {
+  width: device-width;
+}
+@viewport {
+  width: device-width;
+}
 
 @media print {
     * { background: transparent !important; color: black !important; text-shadow: none !important; } /* Black prints faster: sanbeiji.com/archives/953 */
