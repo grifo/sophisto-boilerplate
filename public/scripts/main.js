@@ -1,1 +1,1498 @@
-(function(e){function t(e,n){if(!(this instanceof t))return new t(e,n);if(e instanceof t)return e;var r=t.require("Util");typeof e=="string"?(this.selector=e,this.elements=this.qsa(n,e)):e instanceof Array?this.elements=r.unique(e.filter(r.isElement)):r.isNodeList(e)?this.elements=Array.prototype.slice.call(e).filter(r.isElement):r.isElement(e)?this.elements=[e]:this.elements=[],this._update()}var n={};t.require=function(e){return n[e]},t.define=function(e,r){n[e]=r.call(t.prototype)},e.Rye=t})(window),Rye.define("Util",function(){function r(e,t){if(!e)return;var n=Object.keys(e),r=n.length,i,s;for(i=0;i<r;i++)s=n[i],t.call(e,e[s],s)}function i(t){return r(e.call(arguments,1),function(e){r(e,function(e,n){t[n]=e})}),t}function s(e,t){function n(){this.constructor=e}return i(e,t),n.prototype=t.prototype,e.prototype=new n,e.__super__=t.prototype,e}function o(e){return e&&(e.nodeType===1||e.nodeType===9)}function u(e){return e&&m(["nodelist","htmlcollection"],e)}function a(e){return e.filter(function(t,n){return e.indexOf(t)==n})}function f(e,t){return e.map(function(e){return e[t]})}function l(e,t,n){return e.forEach(function(r,i){e[i][t]=n})}function c(e,t){var n,r=e[0].toUpperCase()+e.substring(1),i=["moz","webkit","ms","o"];t=t||window;if(n=t[e])return n;while(c=i.shift())if(n=t[c+r])break;return n}function h(t,n,r,i,s){return s||(s=Infinity),function(){r==="this"?r=this:typeof r=="number"&&(r=arguments[r]);var o=t==="left"?i.concat(e.call(arguments,0,s)):e.call(arguments,0,s).concat(i);return n.apply(r,o)}}function p(t){return h("left",t,this,e.call(arguments,1))}function d(e){return e.rye_id||(e.rye_id=n.next())}function v(e){var n=t.call(e).match(/\s(\w+)\]$/);return n&&n[1].toLowerCase()}function m(e,t){return e.indexOf(v(t))>=0}var e=Array.prototype.slice,t=Object.prototype.toString,n={current:0,next:function(){return++this.current}};return{each:r,extend:i,inherits:s,isElement:o,isNodeList:u,unique:a,pluck:f,put:l,prefix:c,applier:h,curry:p,getUid:d,type:v,is:m}}),Rye.define("Data",function(){function n(n,r,i){var s=e.getUid(n),o=t[s]||(t[s]={});o[r]=i}function r(n,r){var i=t[e.getUid(n)];return r==null?i:i&&i[r]}var e=Rye.require("Util"),t={};return this.data=function(e,t){return t!==undefined?(this.each(function(r){n(r,e,t)}),this):this.elements.length===1?r(this.elements[0],e):this.elements.map(function(t){return r(t,e)})},{set:n,get:r}}),Rye.define("Query",function(){function s(t,n){var r,u;return!t||!e.isElement(t)||!n?!1:n.nodeType?t===n:n instanceof Rye?n.elements.some(function(e){return s(t,e)}):t===document?!1:(r=e.prefix("matchesSelector",i),r?r.call(t,n):(t.parentNode||i.appendChild(t),u=o(t.parentNode,n).indexOf(t)>=0,t.parentNode===i&&i.removeChild(t),u))}function o(i,s){var o;i=i||document,!s.match(n)||RegExp.$1==="#"&&i!==document?o=r._:(o=r[RegExp.$1],s=RegExp.$2);var u=i[o](s);return e.isNodeList(u)?t.call(u):e.isElement(u)?[u]:[]}function u(t,n,r){do t=t[n];while(t&&(r&&!s(t,r)||!e.isElement(t)));return t}function a(e,t){return t==null?new Rye(e):(new Rye(e)).filter(t)}var e=Rye.require("Util"),t=Array.prototype.slice,n=/^([.#]?)([\w\-]+)$/,r={".":"getElementsByClassName","#":"getElementById","":"getElementsByTagName",_:"querySelectorAll"},i=document.createElement("div");return this.qsa=o,this.find=function(e){var t;return this.length===1?t=o(this.elements[0],e):t=this.elements.reduce(function(t,n){return t.concat(o(n,e))},[]),a(t)},this.filter=function(e,t){if(typeof e=="function"){var n=e;return a(this.elements.filter(function(e,r){return n.call(e,e,r)!=(t||false)}))}return e&&e[0]==="!"&&(e=e.substr(1),t=!0),a(this.elements.filter(function(n){return s(n,e)!=(t||false)}))},this.contains=function(e){var t;return a(this.elements.reduce(function(n,r){return t=o(r,e),n.concat(t.length?r:null)},[]))},this.is=function(e){return this.length>0&&this.filter(e).length>0},this.not=function(e){return this.filter(e,!0)},this.index=function(e){return e==null?this.parent().children().indexOf(this.elements[0]):this.indexOf((new Rye(e)).elements[0])},this.add=function(e,t){var n=e;return typeof e=="string"&&(n=(new Rye(e,t)).elements),this.concat(n)},this.pluckNode=function(e){return this.map(function(t){return u(t,e)})},this.next=function(){return a(this.pluckNode("nextSibling"))},this.prev=function(){return a(this.pluckNode("previousSibling"))},this.first=function(){return a(this.get(0))},this.last=function(){return a(this.get(-1))},this.siblings=function(n){var r=[];return this.each(function(n){t.call(n.parentNode.childNodes).forEach(function(t){e.isElement(t)&&t!==n&&r.push(t)})}),a(r,n)},this.parent=function(e){return a(this.pluck("parentNode"),e)},this.parents=function(e){var t=[],n=this.elements,r=function(e){if((e=e.parentNode)&&e!==document&&t.indexOf(e)<0)return t.push(e),e};while(n.length>0&&n[0]!==undefined)n=n.map(r);return a(t,e)},this.closest=function(e){return this.map(function(t){return s(t,e)?t:u(t,"parentNode",e)})},this.children=function(e){return a(this.elements.reduce(function(e,n){var r=t.call(n.children);return e.concat(r)},[]),e)},{matches:s,qsa:o,getClosestNode:u}}),Rye.define("Collection",function(){var e=Rye.require("Util"),t=Array.prototype.slice,n=Array.prototype.concat;this.get=function(e){return e==null?this.elements.slice():this.elements[e<0?this.elements.length+e:e]},this.eq=function(e){return e==null?new Rye:new Rye(this.get(e))},["forEach","reduce","reduceRight","indexOf"].forEach(function(e){this[e]=function(t,n,r,i){return this.elements[e](t,n,r,i)}}.bind(this)),["map","sort"].forEach(function(e){this[e]=function(t,n,r,i){return new Rye(this.elements[e](t,n,r,i))}}.bind(this)),this.each=function(e){return this.elements.forEach(e),this},this.iterate=function(e,t){return function(n,r,i,s){return this.each(function(o){e.call(t,o,n,r,i,s)})}},this.push=function(t){return e.isElement(t)?(this.elements.push(t),this._update(),this.length-1):-1},this.slice=function(e,n){return new Rye(t.call(this.elements,e,n))},this.concat=function(){var e=t.call(arguments).map(function(e){return e instanceof Rye?e.elements:e});return new Rye(n.apply(this.elements,e))},this.pluck=function(t){return e.pluck(this.elements,t)},this.put=function(t,n){return e.put(this.elements,t,n),this},this._update=function(){this.length=this.elements.length}}),Rye.define("Manipulation",function(){function r(e){return e.multiple?(new Rye(e)).find("option").filter(function(e){return e.selected&&!e.disabled}).pluck("value"):e.value}function i(e,t){return t==="value"&&e.nodeName=="INPUT"?r(e):e.getAttribute(t)}function s(e,t){typeof t=="string"?e.insertAdjacentHTML("beforeend",t):e.appendChild(t)}function o(e,t){var n;typeof t=="string"?e.insertAdjacentHTML("afterbegin",t):(n=e.childNodes[0])?e.insertBefore(t,n):e.appendChild(t)}function u(e,n){var r;typeof n=="string"?e.insertAdjacentHTML("afterend",n):(r=t.getClosestNode(e,"nextSibling"))?e.parentNode.insertBefore(n,r):e.parentNode.appendChild(n)}function a(e,t){typeof t=="string"?e.insertAdjacentHTML("beforebegin",t):e.parentNode.insertBefore(t,e)}function f(t,r){this[r]=function(i){if(typeof i!="string"){i instanceof Rye?i=i.elements:e.isNodeList(i)&&(i=n.call(i));if(Array.isArray(i))return/prepend|before/.test(r)&&(i=n.call(i,0).reverse()),i.forEach(this[r].bind(this))}return this.length===1?t(this.elements[0],i):this.each(function(e,n){var r=n>0?i.cloneNode(!0):i;t(e,r)}),this}}var e=Rye.require("Util"),t=Rye.require("Query"),n=Array.prototype.slice;return e.each({append:s,prepend:o,after:u,before:a},f.bind(this)),this.text=function(e){return e==null?this.elements[0]&&this.elements[0].textContent:this.each(function(t){t.textContent=e})},this.html=function(e){return e==null?this.elements[0]&&this.elements[0].innerHTML:this.each(function(t){t.innerHTML=e})},this.empty=function(){return this.put("innerHTML","")},this.clone=function(){return this.map(function(e){return e.cloneNode(!0)})},this.remove=function(){return this.each(function(e){e.parentNode&&e.parentNode.removeChild(e)})},this.val=function(e){return e==null?this.elements[0]&&r(this.elements[0]):this.each(function(t){t.value=e})},this.attr=function(t,n){return typeof t=="object"?this.each(function(n){e.each(t,function(e,t){n.setAttribute(t,e)})}):typeof n=="undefined"?this.elements[0]&&i(this.elements[0],t):this.each(function(e){e.setAttribute(t,n)})},this.prop=function(t,n){return typeof t=="object"?this.each(function(n){e.each(t,function(e,t){n[t]=e})}):typeof n=="undefined"?this.elements[0]&&this.elements[0][t]:this.put(t,n)},Rye.create=function(e){var t=document.createElement("div"),r;return t.innerHTML=e,r=n.call(t.childNodes),r.forEach(function(e,n){t.removeChild(e)}),new Rye(r)},{getValue:r,getAttribute:i,append:s,prepend:o,after:u,before:a}}),Rye.define("Events",function(){function r(){this.events={},this.context=null}function s(t){var n=e.getUid(t);return i[n]||(i[n]=new f(t))}function o(e){var t=e.indexOf(" ");return t>0?e.substr(0,t):e}function u(e){var t=e.indexOf(" ");return t>0?e.substr(t):""}function a(t,n){typeof t!="string"&&(t=t.type);var r=["click","mousedown","mouseup","mousemove"].indexOf(t)!=-1,i=document.createEvent(r?"MouseEvent":"Event");return n&&e.extend(i,n),i.initEvent(t,!0,!0),i}function f(e){r.call(this),this.element=e,this.proxied={}}function l(t){var n=f.prototype[t];f.prototype[t]=function(t,r){var i=this;return typeof t!="string"?e.each(t,function(e,t){n.call(i,t,e)}):n.call(i,t,r),i}}function h(e,t,n,r){s(t)[e](n,r)}var e=Rye.require("Util"),t=Rye.require("Query"),n=Array.prototype.slice;r.prototype.addListener=function(e,t){var n=this.events[e]||(this.events[e]=[]);return n.push(t),this},r.prototype.once=function(e,t){function r(){t.apply(this,arguments),n.removeListener(e,r)}var n=this;return this.addListener(e,r)},r.prototype.removeListener=function(t,n){var r=this,i=this.events[t];return t==="*"?n?e.each(this.events,function(e,t){r.removeListener(t,n)}):this.events={}:n&&i?(i.splice(i.indexOf(n),1),i.length===0&&delete this.events[t]):delete this.events[t],this},r.prototype.emit=function(t){var r=this.events[t],i=n.call(arguments,1),s=this.context||this;return r&&e.each(r,function(e){e.apply(s,i)}),this},r.prototype.proxy=function(t){return e.applier("left",this.emit,this,[t])};var i={};e.inherits(f,r),f.prototype._proxy=function(e){return function(n){var r=u(e),i=this.element;if(r){i=n.target;while(i&&!t.matches(i,r))i=i!==this.element&&i.parentNode;if(!i||i==this.element)return}this.context=i,this.emit(e,n,this.element)}.bind(this)},f.prototype.proxy=function(e){return this.proxied[e]||(this.proxied[e]=this._proxy(e))},f.prototype.addListener=function(e,t){return r.prototype.addListener.call(this,e,t),this.proxied[e]||this.element.addEventListener(o(e),this.proxy(e),!1),this},f.prototype.removeListener=function(t,n){if(t.indexOf("*")>=0){var i=this,s=new RegExp("^"+t.replace("*","\\b"));e.each(this.events,function(e,t){s.test(t)&&i.removeListener(t,n)})}else{var u=this.proxied[t];r.prototype.removeListener.call(this,t,n),!this.events[t]&&u&&(this.element.removeEventListener(o(t),u,!1),delete this.proxied[t])}return this},["addListener","once","removeListener"].forEach(l),f.prototype.destroy=function(){return this.removeListener("*")},f.prototype.trigger=function(e,t){return e instanceof window.Event||(e=a(e)),e.data=t,this.element.dispatchEvent(e),this};var c={};["addListener","removeListener","once","trigger"].forEach(function(t){var n=e.curry(h,t);c[t]=n,this[t]=this.iterate(n)}.bind(this)),[r.prototype,f.prototype,this].forEach(function(e){e.on=e.addListener});var p=new r;return Rye.subscribe=p.addListener.bind(p),Rye.unsubscribe=p.removeListener.bind(p),Rye.publish=p.emit.bind(p),{EventEmitter:r,DOMEventEmitter:f,getEmitter:s,createEvent:a,addListener:c.addListener,once:c.once,removeListener:c.removeListener,trigger:c.trigger}}),Rye.define("Style",function(){function r(e,t){return e.style.getPropertyValue(t)||window.getComputedStyle(e,null).getPropertyValue(t)}function i(e,t,r){typeof r=="number"&&n.indexOf(t)===-1&&(r+="px");var i=r===null||r===""?"remove":"set";return e.style[i+"Property"](t,""+r),e}function s(e,t){return t=t.trim(),e.classList?e.classList.contains(t):(" "+e.className+" ").indexOf(" "+t+" ")!==-1}function o(e,t){if(e.classList)t.replace(/\S+/g,function(t){e.classList.add(t)});else{var n=" "+e.className+" ",r;t=t.trim().split(/\s+/);while(r=t.shift())n.indexOf(" "+r+" ")===-1&&(n+=r+" ");e.className=n.trim()}return e}function u(e,t){if(t==="*")e.className="";else{if(t instanceof RegExp)t=[t];else{if(e.classList&&t.indexOf("*")===-1){t.replace(/\S+/g,function(t){e.classList.remove(t)});return}t=t.trim().split(/\s+/)}var n=" "+e.className+" ",r;while(r=t.shift()){r.indexOf&&r.indexOf("*")!==-1&&(r=new RegExp("\\s*\\b"+r.replace("*","\\S*")+"\\b\\s*","g"));if(r instanceof RegExp)n=n.replace(r," ");else while(n.indexOf(" "+r+" ")!==-1)n=n.replace(" "+r+" "," ")}e.className=n.trim()}return e}var e=Rye.require("Util"),t=Rye.require("Data"),n="fill-opacity font-weight line-height opacity orphans widows z-index zoom".split(" ");return this.show=this.iterate(function(e){i(e,"display",t.get(e,"_display")||"block")}),this.hide=this.iterate(function(e){var n=r(e,"display");n!=="none"&&t.set(e,"_display",n),i(e,"display","none")}),this.css=function(t,n){return n==null?typeof t=="string"?this.elements[0]&&r(this.elements[0],t):this.each(function(n){e.each(t,function(e,t){i(n,t,e)})}):this.each(function(e){i(e,t,n)})},this.hasClass=function(e){var t=!1;return this.each(function(n){t=t||s(n,e)}),!!t},this.addClass=this.iterate(o),this.removeClass=this.iterate(u),this.toggleClass=this.iterate(function(e,t,n){n==null&&(n=!s(e,t)),(n?o:u)(e,t)}),{getCSS:r,setCSS:i,hasClass:s,addClass:o,removeClass:u}}),Rye.define("TouchEvents",function(){function r(e){return"tagName"in e?e:e.parentNode}function i(t){e.extend(this,t),i.all.push(this)}var e=Rye.require("Util"),t=Rye.require("Events"),n={};i.all=[],i.cancelAll=function(){i.all.forEach(function(e){e.cancel()}),n={}},i.prototype.schedule=function(){this.timeout=setTimeout(this._trigger.bind(this),this.delay)},i.prototype._trigger=function(){this.timeout=null,this.trigger()},i.prototype.cancel=function(){this.timeout&&clearTimeout(this.timeout),this.timeout=null};if(t&&("ontouchstart"in window||window.mocha)){var s=new i({delay:0,trigger:function(){var e=t.createEvent("tap");e.cancelTouch=i.cancelAll,t.trigger(n.element,e),n.isDoubleTap?(t.trigger(n.element,"doubletap"),n={}):o.schedule()}}),o=new i({delay:250,trigger:function(){t.trigger(n.element,"singletap"),n={}}}),u=new i({delay:750,trigger:function(){n.last&&(t.trigger(n.element,"longtap"),n={})}}),a=new i({delay:0,trigger:function(){t.trigger(n.element,"swipe"),t.trigger(n.element,"swipe"+this.direction()),n={}},direction:function(){return Math.abs(n.x1-n.x2)>=Math.abs(n.y1-n.y2)?n.x1-n.x2>0?"left":"right":n.y1-n.y2>0?"up":"down"}});t.addListener(document.body,"touchstart",function(e){var t=Date.now();o.cancel(),n.element=r(e.touches[0].target),n.x1=e.touches[0].pageX,n.y1=e.touches[0].pageY,n.last&&t-n.last<=250&&(n.isDoubleTap=!0),n.last=t,u.schedule()}),t.addListener(document.body,"touchmove",function(e){u.cancel(),n.x2=e.touches[0].pageX,n.y2=e.touches[0].pageY}),t.addListener(document.body,"touchend",function(){u.cancel(),Math.abs(n.x1-n.x2)>30||Math.abs(n.y1-n.y2)>30?a.schedule():"last"in n&&s.schedule()}),t.addListener(document.body,"touchcancel",i.cancelAll),t.addListener(window,"scroll",i.cancelAll)}}),Rye.define("Request",function(){function o(t){var n=[];return function i(t,s){e.each(t,function(o,u){o=t[u],s&&(u=s+"["+(Array.isArray(t)?"":u)+"]"),e.is(["array","object"],o)?i(o,u):n.push(r(u)+"="+r(o))})}(t),n.join("&").replace(/%20/g,"+")}function u(e,t){return(e+"&"+t).replace(/[&?]+/,"?")}function a(e){e.data&&typeof e.data!="string"&&(e.data=o(e.data)),e.data&&e.method==="GET"&&(e.url=u(e.url,e.data))}function f(e){return e&&(e.split("/")[1]||e)}function l(e){var t=e.response;if(t===null)return new Error("Parser Error");if(typeof t!="object")try{t=JSON.parse(e.responseText)}catch(n){return n}return t}function c(e){var t=e.responseXML;if(t.xml&&window.DOMParser)try{var n=new window.DOMParser;t=n.parseFromString(t.xml,"text/xml")}catch(r){return r}return t}function h(t,r){typeof t=="string"&&(t={url:t}),r||(r=t.callback||n);var o=e.extend({},s,t),u=new window.XMLHttpRequest,h=o.accepts[o.responseType],p=null,d={};o.method=o.method.toUpperCase(),a(o),h&&(d.Accept=h,u.overrideMimeType&&u.overrideMimeType(h.split(",")[0]));if(o.contentType||["POST","PUT"].indexOf(o.method)>=0)d["Content-Type"]=o.contentType||"application/x-www-form-urlencoded";return e.extend(d,o.headers||{}),u.onreadystatechange=function(){var e,t;if(u.readyState!=4||!u.status)return;u.onreadystatechange=n,clearTimeout(p);if(u.status>=200&&u.status<300||u.status==304){u.type=o.responseType||u.responseType||f(u.getResponseHeader("content-type"));switch(u.type){case"json":t=l(u);break;case"xml":t=c(u);break;default:t=u.responseText}t instanceof Error&&(e=t,t=undefined)}else e=new Error("Request failed");r.call(u,e,t,u)},u.ontimeout=function(){r.call(u,new Error("Timeout"),null,u)},u.open(o.method,o.url,o.async),!("timeout"in u)&&o.timeout>0&&(p=setTimeout(function(){u.onreadystatechange=n,u.abort(),u.ontimeout()},o.timeout)),e.each(o,function(e,t){if(t!=="responseType"||i.types.indexOf(e)>=0)try{u[t]=e}catch(n){}}),e.each(d,function(e,t){u.setRequestHeader(t,e)}),u.send(o.data),u}function p(e,t,n){return typeof t=="string"&&(t={url:t}),t.method=e,h(t,n)}var e=Rye.require("Util"),t=Rye.require("Manipulation"),n=function(){},r=encodeURIComponent,i={types:["arraybuffer","blob","document","json","text"],json:"application/json",xml:"application/xml, text/xml",html:"text/html, application/xhtml+xml",text:"text/plain"},s={method:"GET",url:window.location.toString(),async:!0,accepts:i,callback:n,timeout:0},d="fieldset submit reset button image radio checkbox".split(" ");this.serialize=function(){var e=this.get(0),n={};return(new Rye(e&&e.elements)).forEach(function(e){!e.disabled&&(e.checked||e.type&&d.indexOf(e.type)<0)&&(n[e.name]=t.getValue(e))}),o(n)},Rye.request=h,Rye.get=e.curry(p,"GET"),Rye.post=e.curry(p,"POST");var v=h.bind({});return e.extend(v,{serialize:o,appendQuery:u,defaults:s,get:e.curry(p,"GET"),post:e.curry(p,"POST")}),v})(function(){(function(){return console.log("Hello Word!")})()}).call(this)
+(function(global){
+
+    function Rye (selector, context) {
+        if (!(this instanceof Rye)){
+            return new Rye(selector, context)
+        }
+
+        if (selector instanceof Rye){
+            return selector
+        }
+
+        var util = Rye.require('Util')
+
+        if (typeof selector === 'string') {
+            this.selector = selector
+            this.elements = this.qsa(context, selector)
+
+        } else if (selector instanceof Array) {
+            this.elements = util.unique(selector.filter(util.isElement))
+
+        } else if (util.isNodeList(selector)) {
+            this.elements = Array.prototype.slice.call(selector).filter(util.isElement)
+
+        } else if (util.isElement(selector)) {
+            this.elements = [selector]
+
+        } else {
+            this.elements = []
+        }
+
+        this._update()
+    }
+
+    // Minimalist module system
+    var modules = {}
+    Rye.require = function (module) {
+        return modules[module]
+    }
+    Rye.define = function (module, fn) {
+        modules[module] = fn.call(Rye.prototype)
+    }
+
+    // Export global object
+    global.Rye = Rye
+
+})(window)
+
+Rye.define('Util', function(){
+
+    var _slice = Array.prototype.slice
+      , _toString = Object.prototype.toString
+
+    var uid = {
+            current: 0
+          , next: function(){ return ++this.current }
+        }
+
+    function each (obj, fn) {
+        if (!obj) {
+            return
+        }
+        var keys = Object.keys(obj)
+          , ln = keys.length
+          , i, key
+        for (i = 0; i < ln; i++) {
+            key = keys[i]
+            fn.call(obj, obj[key], key)
+        }
+    }
+
+    function extend (obj) {
+        each(_slice.call(arguments, 1), function(source){
+            each(source, function(value, key){
+                obj[key] = value
+            })
+        })
+        return obj
+    }
+
+    function inherits (child, parent) {
+        extend(child, parent)
+        function Ctor () {
+            this.constructor = child
+        }
+        Ctor.prototype = parent.prototype
+        child.prototype = new Ctor()
+        child.__super__ = parent.prototype
+        return child
+    }
+
+    function isElement (element) {
+        return element && (element.nodeType === 1 || element.nodeType === 9)
+    }
+    
+    function isNodeList (obj) {
+        return obj && is(['nodelist', 'htmlcollection'], obj)
+    }
+
+    function unique (array) {
+        return array.filter(function(item, idx){
+            return array.indexOf(item) == idx
+        })
+    }
+
+    function pluck (array, property) {
+        return array.map(function(item){
+            return item[property]
+        })
+    }
+
+    function put (array, property, value) {
+        return array.forEach(function(item, i){
+            array[i][property] = value
+        })
+    }
+
+    function prefix (key, obj) {
+        var result
+          , upcased = key[0].toUpperCase() + key.substring(1)
+          , prefixes = ['moz', 'webkit', 'ms', 'o']
+
+        obj = obj || window
+
+        if (result = obj[key]){
+            return result
+        }
+
+        // No pretty array methods here :(
+        // http://jsperf.com/everywhile
+        while(prefix = prefixes.shift()){
+            if (result = obj[prefix + upcased]){
+                break;
+            }
+        }
+        return result
+    }
+
+    function applier (direction, fn, context, args, cutoff) {
+        if (!cutoff) {
+            cutoff = Infinity // this must be a first
+        }
+        return function () {
+            if (context === 'this'){
+                context = this
+            } else if (typeof context == 'number'){
+                context = arguments[context]
+            }
+
+            var supply = direction === 'left'
+                ? args.concat(_slice.call(arguments, 0, cutoff))
+                : _slice.call(arguments, 0, cutoff).concat(args)
+
+            return fn.apply(context, supply)
+        }
+    }
+
+    function curry (fn) {
+        return applier('left', fn, this, _slice.call(arguments, 1))
+    }
+
+    function getUid (element) {
+        return element.rye_id || (element.rye_id = uid.next())
+    }
+
+    function type (obj) {
+        var ref = _toString.call(obj).match(/\s(\w+)\]$/)
+        return ref && ref[1].toLowerCase()
+    }
+
+    function is (kind, obj) {
+        return kind.indexOf(type(obj)) >= 0
+    }
+
+    return {
+        each        : each
+      , extend      : extend
+      , inherits    : inherits
+      , isElement   : isElement
+      , isNodeList  : isNodeList
+      , unique      : unique
+      , pluck       : pluck
+      , put         : put
+      , prefix      : prefix
+      , applier     : applier
+      , curry       : curry
+      , getUid      : getUid
+      , type        : type
+      , is          : is
+    }
+
+})
+
+Rye.define('Data', function(){
+
+    var util = Rye.require('Util')
+      , data = {}
+
+    function set (element, key, value) {
+        var id = util.getUid(element)
+          , obj = data[id] || (data[id] = {})
+        obj[key] = value
+    }
+
+    function get (element, key) {
+        var obj = data[util.getUid(element)]
+        if (key == null) {
+            return obj
+        }
+        return obj && obj[key]
+    }
+
+    this.data = function (key, value) {
+        if (value !== undefined) {
+            this.each(function(element){
+                set(element, key, value)
+            })
+            return this
+        }
+
+        if (this.elements.length === 1) {
+            return get(this.elements[0], key)
+        } else {
+            return this.elements.map(function(element){
+                return get(element, key)
+            })
+        }
+    }
+
+
+    return {
+        set   : set
+      , get   : get
+    }
+})
+Rye.define('Query', function(){
+
+    var util = Rye.require('Util')
+      , _slice = Array.prototype.slice
+      , selectorRE = /^([.#]?)([\w\-]+)$/
+      , selectorType = {
+            '.': 'getElementsByClassName'
+          , '#': 'getElementById'
+          , '' : 'getElementsByTagName'
+          , '_': 'querySelectorAll'
+        }
+      , dummyDiv = document.createElement('div')
+
+    function matches(element, selector) {
+        var matchesSelector, match
+        if (!element || !util.isElement(element) || !selector) {
+            return false
+        }
+
+        if (selector.nodeType) {
+            return element === selector
+        }
+
+        if (selector instanceof Rye) {
+            return selector.elements.some(function(selector){
+                return matches(element, selector)
+            })
+        }
+
+        if (element === document) {
+            return false
+        }
+
+        matchesSelector = util.prefix('matchesSelector', dummyDiv)
+        if (matchesSelector) {
+            return matchesSelector.call(element, selector)
+        }
+
+        // fall back to performing a selector:
+        if (!element.parentNode) {
+            dummyDiv.appendChild(element)
+        }
+        match = qsa(element.parentNode, selector).indexOf(element) >= 0
+        if (element.parentNode === dummyDiv) {
+            dummyDiv.removeChild(element)
+        }
+        return match
+    }
+
+    function qsa (element, selector) {
+        var method
+        
+        element = element || document
+
+        // http://jsperf.com/getelementbyid-vs-queryselector/11
+        if (!selector.match(selectorRE) || (RegExp.$1 === '#' && element !== document)) {
+            method = selectorType._
+        } else {
+            method = selectorType[RegExp.$1]
+            selector = RegExp.$2
+        }
+
+        var result = element[method](selector)
+
+        if (util.isNodeList(result)){
+            return _slice.call(result)
+        }
+
+        if (util.isElement(result)){
+            return [result]
+        }
+
+        return []
+    }
+
+    // Walks the DOM tree using `method`, returns
+    // when an element node is found
+    function getClosestNode (element, method, selector) {
+        do {
+            element = element[method]
+        } while (element && ((selector && !matches(element, selector)) || !util.isElement(element)))
+        return element
+    }
+
+    // Creates a new Rye instance applying a filter if necessary
+    function _create (elements, selector) {
+        return selector == null ? new Rye(elements) : new Rye(elements).filter(selector)
+    }
+
+    this.qsa = qsa
+
+    this.find = function (selector) {
+        var elements
+        if (this.length === 1) {
+            elements = qsa(this.elements[0], selector)
+        } else {
+            elements = this.elements.reduce(function(elements, element){
+                return elements.concat(qsa(element, selector))
+            }, [])
+        }
+        return _create(elements)
+    }
+
+    this.filter = function (selector, inverse) {
+        if (typeof selector === 'function') {
+            var fn = selector
+            return _create(this.elements.filter(function(element, index){
+                return fn.call(element, element, index) != (inverse || false)
+            }))
+        }
+        if (selector && selector[0] === '!') {
+            selector = selector.substr(1)
+            inverse = true
+        }
+        return _create(this.elements.filter(function(element){
+            return matches(element, selector) != (inverse || false)
+        }))
+    }
+
+    this.contains = function (selector) {
+        var matches
+        return _create(this.elements.reduce(function(elements, element){
+            matches = qsa(element, selector)
+            return elements.concat(matches.length ? element : null)
+        }, []))
+    }
+
+    this.is = function (selector) {
+        return this.length > 0 && this.filter(selector).length > 0
+    }
+
+    this.not = function (selector) {
+        return this.filter(selector, true)
+    }
+
+    this.index = function (selector) {
+        if (selector == null) {
+            return this.parent().children().indexOf(this.elements[0])
+        }
+        return this.indexOf(new Rye(selector).elements[0])
+    }
+
+    this.add = function (selector, context) {
+        var elements = selector
+        if (typeof selector === 'string') {
+            elements = new Rye(selector, context).elements
+        }
+        return this.concat(elements)
+    }
+
+    // Extract a list with the provided property for each value.
+    // This works like underscore's pluck, with the added
+    // getClosestNode() method to avoid picking up non-html nodes.
+    this.pluckNode = function (property) {
+        return this.map(function(element){
+            return getClosestNode(element, property)
+        })
+    }
+
+    this.next = function () {
+        return _create(this.pluckNode('nextSibling'))
+    }
+
+    this.prev = function () {
+        return _create(this.pluckNode('previousSibling'))
+    }
+
+    this.first = function () {
+        return _create(this.get(0))
+    }
+
+    this.last = function () {
+        return _create(this.get(-1))
+    }
+
+    this.siblings = function (selector) {
+        var siblings = []
+        this.each(function(element){
+            _slice.call(element.parentNode.childNodes).forEach(function(child){
+                if (util.isElement(child) && child !== element){
+                    siblings.push(child)
+                }
+            })
+        })
+        return _create(siblings, selector)
+    }
+
+    this.parent = function (selector) {
+        return _create(this.pluck('parentNode'), selector)
+    }
+
+    // borrow from zepto
+    this.parents = function (selector) {
+        var ancestors = []
+          , elements = this.elements
+          , fn = function (element) {
+                if ((element = element.parentNode) && element !== document && ancestors.indexOf(element) < 0) {
+                    ancestors.push(element)
+                    return element
+                }
+            }
+
+        while (elements.length > 0 && elements[0] !== undefined) {
+            elements = elements.map(fn)
+        }
+        return _create(ancestors, selector)
+    }
+
+    this.closest = function (selector) {
+        return this.map(function(element){
+            if (matches(element, selector)) {
+                return element
+            }
+            return getClosestNode(element, 'parentNode', selector)
+        })
+    }
+
+    this.children = function (selector) {
+        return _create(this.elements.reduce(function(elements, element){
+            var childrens = _slice.call(element.children)
+            return elements.concat(childrens)
+        }, []), selector)
+    }
+
+
+    return {
+        matches        : matches
+      , qsa            : qsa
+      , getClosestNode : getClosestNode
+    }
+
+})
+
+Rye.define('Collection', function(){
+
+    var util = Rye.require('Util')
+      , _slice  = Array.prototype.slice
+      , _concat = Array.prototype.concat
+
+    this.get = function (index) {
+        if (index == null) {
+            return this.elements.slice()
+        }
+        return this.elements[index < 0 ? this.elements.length + index : index]
+    }
+
+    this.eq = function (index) {
+        // We have to explicitly null the selection since .get()
+        // returns the whole collection when called without arguments.
+        if (index == null) {
+            return new Rye()
+        }
+        return new Rye(this.get(index))
+    }
+
+    // Methods that return a usable value
+    ;['forEach', 'reduce', 'reduceRight', 'indexOf'].forEach(function(method){
+        this[method] = function (a, b, c, d) {
+            return this.elements[method](a, b, c, d)
+        }
+    }.bind(this))
+
+    // Methods that return a list are turned into a Rye instance
+    ;['map', 'sort'].forEach(function(method){
+        this[method] = function (a, b, c, d) {
+            return new Rye(this.elements[method](a, b, c, d))
+        }
+    }.bind(this))
+
+    this.each = function (fn) {
+        this.elements.forEach(fn)
+        return this
+    }
+
+    this.iterate = function(method, context){
+        return function(a, b, c, d){
+            return this.each(function(element){
+                method.call(context, element, a, b, c, d)
+            })
+        }
+    }
+
+    this.push = function (item) {
+        if (util.isElement(item)){
+            this.elements.push(item)
+            this._update()
+            return this.length - 1
+        } else {
+            return -1
+        }
+    }
+
+    this.slice = function (start, end) {
+        return new Rye(_slice.call(this.elements, start, end))
+    }
+
+    // Concatenate two elements lists, do .unique() clean-up
+    this.concat = function () {
+        var args = _slice.call(arguments).map(function(arr){
+            return arr instanceof Rye ? arr.elements : arr
+        })
+        return new Rye(_concat.apply(this.elements, args))
+    }
+
+    this.pluck = function (property) {
+        return util.pluck(this.elements, property)
+    }
+
+    this.put = function (property, value) {
+        util.put(this.elements, property, value)
+        return this
+    }
+
+    this._update = function () {
+        this.length = this.elements.length
+    }
+
+})
+
+Rye.define('Manipulation', function(){
+
+    var util = Rye.require('Util')
+      , query = Rye.require('Query')
+      , _slice = Array.prototype.slice
+
+    function getValue(element) {
+        if (element.multiple) {
+            return new Rye(element).find('option').filter(function(option) {
+                return option.selected && !option.disabled
+            }).pluck('value')
+        }
+        return element.value
+    }
+
+    function getAttribute(element, name) {
+        if (name === 'value' && element.nodeName == 'INPUT') {
+            return getValue(element)
+        }
+        return element.getAttribute(name)
+    }
+
+    function append (element, html) {
+        if (typeof html === 'string') {
+            element.insertAdjacentHTML('beforeend', html)
+        } else {
+            element.appendChild(html)
+        }
+    }
+
+    function prepend (element, html) {
+        var first
+        if (typeof html === 'string') {
+            element.insertAdjacentHTML('afterbegin', html)
+        } else if (first = element.childNodes[0]){
+            element.insertBefore(html, first)
+        } else {
+            element.appendChild(html)
+        }
+    }
+
+    function after (element, html) {
+        var next
+        if (typeof html === 'string') {
+            element.insertAdjacentHTML('afterend', html)
+        } else if (next = query.getClosestNode(element, 'nextSibling')) {
+            element.parentNode.insertBefore(html, next)
+        } else {
+            element.parentNode.appendChild(html)
+        }
+    }
+
+    function before (element, html) {
+        if (typeof html === 'string') {
+            element.insertAdjacentHTML('beforebegin', html)
+        } else {
+            element.parentNode.insertBefore(html, element)
+        }
+    }
+
+    function proxyExport(fn, method) {
+        // This function coerces the input into either a string or an array of elements,
+        // then passes it on to the appropriate method, iterating if necessary.
+        this[method] = function (obj) {
+
+            if (typeof obj !== 'string'){
+                if (obj instanceof Rye) {
+                    obj = obj.elements
+                } else if (util.isNodeList(obj)) {
+                    obj = _slice.call(obj)
+                }
+                // Also support arrays [el1, el2, ...]
+                if (Array.isArray(obj)) {
+                    if (/prepend|before/.test(method)){
+                        obj = _slice.call(obj, 0).reverse()
+                    }
+                    return obj.forEach(this[method].bind(this))
+                }
+            }
+
+            if (this.length === 1) {
+                fn(this.elements[0], obj)
+            } else {
+                this.each(function(element, i){
+                    var node = i > 0 ? obj.cloneNode(true) : obj
+                    fn(element, node)
+                })
+            }
+            return this
+        }
+    }
+
+    // Patch methods, add to prototype
+    util.each({
+        append  : append
+      , prepend : prepend
+      , after   : after
+      , before  : before
+    }, proxyExport.bind(this))
+
+
+    this.text = function (text) {
+        if (text == null) {
+            return this.elements[0] && this.elements[0].textContent
+        }
+        return this.each(function(element){
+            element.textContent = text
+        })
+    }
+
+    this.html = function (html) {
+        if (html == null) {
+            return this.elements[0] && this.elements[0].innerHTML
+        }
+        return this.each(function(element){
+            element.innerHTML = html
+        })
+    }
+
+    this.empty = function () {
+        return this.put('innerHTML', '')
+    }
+
+    this.clone = function () {
+        return this.map(function(element){
+            return element.cloneNode(true)
+        })
+    }
+
+    this.remove = function () {
+        return this.each(function(element){
+            if (element.parentNode) {
+                element.parentNode.removeChild(element)
+            }
+        })
+    }
+
+    this.val = function (value) {
+        if (value == null) {
+            return this.elements[0] && getValue(this.elements[0])
+        }
+        return this.each(function(element){
+            element.value = value
+        })
+    }
+
+    this.attr = function (name, value) {
+        if (typeof name === 'object'){
+            return this.each(function(element){
+                util.each(name, function(value, key){
+                    element.setAttribute(key, value)
+                })
+            })
+        }
+        return typeof value === 'undefined'
+          ? this.elements[0] && getAttribute(this.elements[0], name)
+          : this.each(function(element){
+                element.setAttribute(name, value)
+            })
+    }
+
+    this.prop = function (name, value) {
+        if (typeof name === 'object'){
+            return this.each(function(element){
+                util.each(name, function(value, key){
+                    element[key] = value
+                })
+            })
+        }
+        return typeof value === 'undefined'
+          ? this.elements[0] && this.elements[0][name]
+          : this.put(name, value)
+    }
+
+    Rye.create = function (html) {
+        var temp = document.createElement('div')
+          , children
+
+        temp.innerHTML = html
+
+        children = _slice.call(temp.childNodes)
+        children.forEach(function(node, i){
+            temp.removeChild(node)
+        })
+
+        return new Rye(children)
+    }
+
+    return {
+        getValue     : getValue
+      , getAttribute : getAttribute
+      , append       : append
+      , prepend      : prepend
+      , after        : after
+      , before       : before
+    }
+
+})
+Rye.define('Events', function(){
+
+    var util = Rye.require('Util')
+      , query = Rye.require('Query')
+      , _slice = Array.prototype.slice
+
+    // General-purpose event emitter
+    // -----------------------------
+
+    function EventEmitter () {
+        this.events = {}
+        this.context = null
+    }
+
+    // Adds a handler to the events list
+    EventEmitter.prototype.addListener = function (event, handler) {
+        var handlers = this.events[event] || (this.events[event] = [])
+        handlers.push(handler)
+        return this
+    }
+
+    // Add a handler that can only get called once
+    EventEmitter.prototype.once = function (event, handler) {
+        var self = this
+        function suicide () {
+            handler.apply(this, arguments)
+            self.removeListener(event, suicide)
+        }
+        return this.addListener(event, suicide)
+    }
+
+    // Removes a handler from the events list
+    EventEmitter.prototype.removeListener = function (event, handler) {
+        var self = this
+          , handlers = this.events[event]
+        if (event === '*') {
+            if (!handler) {
+                this.events = {}
+            } else {
+                util.each(this.events, function(handlers, event){
+                    self.removeListener(event, handler)
+                })
+            }
+        } else if (handler && handlers) {
+            handlers.splice(handlers.indexOf(handler), 1)
+            if (handlers.length === 0) {
+                delete this.events[event]
+            }
+        } else {
+            delete this.events[event]
+        }
+        return this
+    }
+
+    // Calls all handlers that match the event type
+    EventEmitter.prototype.emit = function (event) {
+        var handlers = this.events[event]
+          , args = _slice.call(arguments, 1)
+          , context = this.context || this
+
+        if (handlers) {
+            util.each(handlers, function(fn) {
+                fn.apply(context, args)
+            })
+        }
+        return this
+    }
+
+    EventEmitter.prototype.proxy = function (event) {
+        return util.applier('left', this.emit, this, [event])
+    }
+
+    // Utility methods
+    // -----------------------------
+
+    var emitters = {}
+
+    function getEmitter (element) {
+        var id = util.getUid(element)
+        return emitters[id] || (emitters[id] = new DOMEventEmitter(element))
+    }
+
+    function getType (event) {
+        var index = event.indexOf(' ')
+        return index > 0 ? event.substr(0, index) : event
+    }
+
+    function getSelector (event) {
+        var index = event.indexOf(' ')
+        return index > 0 ? event.substr(index) : ''
+    }
+
+    function createEvent (type, properties) {
+        if (typeof type != 'string') {
+            type = type.type
+        }
+        var isMouse = ['click', 'mousedown', 'mouseup', 'mousemove'].indexOf(type) != -1
+          , event = document.createEvent(isMouse ? 'MouseEvent' : 'Event')
+        if (properties) {
+            util.extend(event, properties)
+        }
+        event.initEvent(type, true, true)
+        return event
+    }
+
+    // DOM event emitter
+    // -----------------------------
+
+    /*
+        Creates one event emitter per element, proxies DOM events to it. This way
+        we can keep track of the functions so that they can be removed from the
+        elements by reference when you call .removeListener() by event name.   
+    */
+
+    function DOMEventEmitter (element) {
+        EventEmitter.call(this)
+        this.element = element
+        this.proxied = {}
+    }
+
+    util.inherits(DOMEventEmitter, EventEmitter)
+
+    DOMEventEmitter.prototype._proxy = function (event) {
+        return function (DOMEvent) {
+            var selector = getSelector(event)
+              , context = this.element
+            // delegate behavior
+            if (selector) {
+                context = DOMEvent.target
+                while (context && !query.matches(context, selector)) {
+                    context = context !== this.element && context.parentNode
+                }
+                if (!context || context == this.element) {
+                    return
+                }
+            }
+            this.context = context
+            this.emit(event, DOMEvent, this.element)
+        }.bind(this)
+    }
+
+    DOMEventEmitter.prototype.proxy = function (event) {
+        return this.proxied[event] || (this.proxied[event] = this._proxy(event))
+    }
+
+    DOMEventEmitter.prototype.addListener = function (event, handler) {
+        EventEmitter.prototype.addListener.call(this, event, handler)
+        if (!this.proxied[event]) {
+            this.element.addEventListener(getType(event), this.proxy(event), false)
+        }
+        return this
+    }
+
+    DOMEventEmitter.prototype.removeListener = function (event, handler) {
+        if (event.indexOf('*') >= 0) {
+            var self = this
+              , re = new RegExp('^' + event.replace('*', '\\b'))
+            // *      : remove all events
+            // type * : remove delegate events
+            // type*  : remove delegate and undelegate
+            util.each(this.events, function(handlers, event){
+                if (re.test(event)) {
+                    self.removeListener(event, handler)
+                }
+            })
+        } else {
+            var proxy = this.proxied[event]
+            EventEmitter.prototype.removeListener.call(this, event, handler)
+            if (!this.events[event] && proxy) {
+                this.element.removeEventListener(getType(event), proxy, false)
+                delete this.proxied[event]
+            }
+        }
+        return this
+    }
+
+    function acceptMultipleEvents (method) {
+        var _method = DOMEventEmitter.prototype[method]
+        DOMEventEmitter.prototype[method] = function (event, handler) {
+            var self = this
+            if (typeof event !== 'string') {
+                util.each(event, function(handler, event){
+                    _method.call(self, event, handler)
+                })
+            } else {
+                _method.call(self, event, handler)
+            }
+            return self
+        }
+    }
+
+    ;['addListener', 'once', 'removeListener'].forEach(acceptMultipleEvents)
+
+    DOMEventEmitter.prototype.destroy = function () {
+        return this.removeListener('*')
+    }
+
+    DOMEventEmitter.prototype.trigger = function (event, data) {
+        if (!(event instanceof window.Event)) {
+            event = createEvent(event)
+        }
+        event.data = data
+        this.element.dispatchEvent(event)
+        return this
+    }
+
+    // Exported methods
+    // -----------------------------
+    
+    var exports = {}
+
+    function emitterProxy (method, element, event, handler) {
+        getEmitter(element)[method](event, handler)
+    }
+
+    ;['addListener', 'removeListener', 'once', 'trigger'].forEach(function(method){
+        // Create a function proxy for the method
+        var fn = util.curry(emitterProxy, method)
+        // Exports module and rye methods
+        exports[method] = fn
+        this[method] = this.iterate(fn)
+    }.bind(this))
+
+    // Aliases
+    // -----------------------------
+    
+    ;[EventEmitter.prototype, DOMEventEmitter.prototype, this].forEach(function(obj){
+        obj.on = obj.addListener
+    })
+
+    // Global event bus / pub-sub
+    // -----------------------------
+
+    var EE = new EventEmitter
+
+    Rye.subscribe   = EE.addListener.bind(EE)
+    Rye.unsubscribe = EE.removeListener.bind(EE)
+    Rye.publish     = EE.emit.bind(EE)
+
+    
+    return {
+        EventEmitter    : EventEmitter
+      , DOMEventEmitter : DOMEventEmitter
+      , getEmitter      : getEmitter
+      , createEvent     : createEvent
+      , addListener     : exports.addListener
+      , once            : exports.once
+      , removeListener  : exports.removeListener
+      , trigger         : exports.trigger
+    }
+})
+
+Rye.define('Style', function(){
+
+    var util = Rye.require('Util')
+      , data = Rye.require('Data')
+      , _cssNumber = 'fill-opacity font-weight line-height opacity orphans widows z-index zoom'.split(' ')
+
+    function getCSS (element, property) {
+        return element.style.getPropertyValue(property)
+            || window.getComputedStyle(element, null).getPropertyValue(property)
+    }
+
+    function setCSS (element, property, value) {
+        // If a number was passed in, add 'px' to the (except for certain CSS properties)
+        if (typeof value == 'number' && _cssNumber.indexOf(property) === -1) {
+            value += 'px'
+        }
+        var action = (value === null || value === '') ? 'remove' : 'set'
+        element.style[action + 'Property'](property, '' + value)
+        return element
+    }
+
+    function hasClass (element, name) {
+        name = name.trim()
+        return element.classList ? 
+               element.classList.contains(name)
+             : (' ' + element.className + ' ').indexOf(' ' + name + ' ') !== -1
+    }
+
+    function addClass (element, names) {
+        if (element.classList) {
+            names.replace(/\S+/g, function(name){ element.classList.add(name) })
+        } else {
+            var classes = ' ' + element.className + ' ', name
+            names = names.trim().split(/\s+/)
+            while (name = names.shift()) {
+                if (classes.indexOf(' ' + name + ' ') === -1) { 
+                    classes += name + ' '
+                }
+            }
+            element.className = classes.trim()
+        }
+        return element
+    }
+
+    function removeClass (element, names) {
+        if (names === '*') {
+            element.className = ''
+        } else {
+            if (names instanceof RegExp) {
+                names = [names]
+            } else if (element.classList && names.indexOf('*') === -1) {
+                names.replace(/\S+/g, function(name){ element.classList.remove(name) })
+                return
+            } else {
+                names = names.trim().split(/\s+/)
+            }
+
+            var classes = ' ' + element.className + ' ', name
+            while (name = names.shift()) {
+                if (name.indexOf && name.indexOf('*') !== -1) {
+                    name = new RegExp('\\s*\\b' + name.replace('*', '\\S*') + '\\b\\s*', 'g')
+                }
+                if (name instanceof RegExp) {
+                    classes = classes.replace(name, ' ')
+                } else {
+                    while (classes.indexOf(' ' + name + ' ') !== -1) {
+                        classes = classes.replace(' ' + name + ' ', ' ')
+                    }
+                }
+            }
+            element.className = classes.trim()
+        }
+        return element
+    }
+
+
+    this.show = this.iterate(function(element){
+        setCSS(element, 'display', data.get(element, '_display') || 'block')
+    })
+
+    this.hide = this.iterate(function(element){
+        var _display = getCSS(element, 'display')
+        if (_display !== 'none') {
+            data.set(element, '_display', _display)
+        }
+        setCSS(element, 'display', 'none')
+    })
+
+    this.css = function (property, value) {
+        if (value == null) {
+            if (typeof property == 'string') {
+                return this.elements[0] && getCSS(this.elements[0], property)
+            }
+
+            return this.each(function(element){
+                util.each(property, function(value, key){
+                    setCSS(element, key, value)
+                })
+            })
+        }
+        return this.each(function(element){
+            setCSS(element, property, value)
+        })
+    }
+
+    this.hasClass = function (name) {
+        var result = false
+        this.each(function(element){
+            result = result || hasClass(element, name)
+        })
+        return !!result
+    }
+
+    this.addClass = this.iterate(addClass)
+
+    this.removeClass = this.iterate(removeClass)
+
+    this.toggleClass = this.iterate(function(element, name, when){
+        if (when == null) {
+            when = !hasClass(element, name)
+        }
+        (when ? addClass : removeClass)(element, name)
+    })
+
+
+    return {
+        getCSS      : getCSS
+      , setCSS      : setCSS
+      , hasClass    : hasClass
+      , addClass    : addClass
+      , removeClass : removeClass
+    }
+})
+
+Rye.define('TouchEvents', function(){
+
+    var util = Rye.require('Util')
+      , events = Rye.require('Events')
+      , touch = {}
+
+    // checks if it needed
+    function parentIfText (node) {
+        return 'tagName' in node ? node : node.parentNode
+    }
+
+    function Gesture(props) {
+        util.extend(this, props)
+        Gesture.all.push(this)
+    }
+    Gesture.all = []
+    Gesture.cancelAll = function () {
+        Gesture.all.forEach(function(instance){
+            instance.cancel()
+        })
+        touch = {}
+    }
+    Gesture.prototype.schedule = function () {
+        this.timeout = setTimeout(this._trigger.bind(this), this.delay)
+    }
+    Gesture.prototype._trigger = function () {
+        this.timeout = null
+        this.trigger()
+    }
+    Gesture.prototype.cancel = function () {
+        if (this.timeout) {
+            clearTimeout(this.timeout)
+        }
+        this.timeout = null
+    }
+
+    if (events && ('ontouchstart' in window || window.mocha)) {
+
+        var tap = new Gesture({
+                delay: 0
+              , trigger: function () {
+                    // cancelTouch cancels processing of single vs double taps for faster 'tap' response
+                    var event = events.createEvent('tap')
+                    event.cancelTouch = Gesture.cancelAll
+                    events.trigger(touch.element, event)
+
+                    // trigger double tap immediately
+                    if (touch.isDoubleTap) {
+                        events.trigger(touch.element, 'doubletap')
+                        touch = {}
+
+                    // trigger single tap after (x)ms of inactivity
+                    } else {
+                        singleTap.schedule()
+                    }
+                }
+            })
+          , singleTap = new Gesture({
+                delay: 250
+              , trigger: function () {
+                    events.trigger(touch.element, 'singletap')
+                    touch = {}
+                }
+            })
+          , longTap = new Gesture({
+                delay: 750
+              , trigger: function () {
+                    if (touch.last) {
+                        events.trigger(touch.element, 'longtap')
+                        touch = {}
+                    }
+                }
+            })
+          , swipe = new Gesture({
+                delay: 0
+              , trigger: function () {
+                    events.trigger(touch.element, 'swipe')
+                    events.trigger(touch.element, 'swipe' + this.direction())
+                    touch = {}
+                }
+              , direction: function () {
+                    if (Math.abs(touch.x1 - touch.x2) >= Math.abs(touch.y1 - touch.y2)) {
+                        return touch.x1 - touch.x2 > 0 ? 'left' : 'right'
+                    }
+                    return touch.y1 - touch.y2 > 0 ? 'up' : 'down'
+                }
+            })
+
+        events.addListener(document.body, 'touchstart', function (event) {
+            var now = Date.now()
+            singleTap.cancel()
+            touch.element = parentIfText(event.touches[0].target)
+            touch.x1 = event.touches[0].pageX
+            touch.y1 = event.touches[0].pageY
+            if (touch.last && (now - touch.last) <= 250) {
+                touch.isDoubleTap = true
+            }
+            touch.last = now
+            longTap.schedule()
+        })
+
+        events.addListener(document.body, 'touchmove', function (event) {
+            longTap.cancel()
+            touch.x2 = event.touches[0].pageX
+            touch.y2 = event.touches[0].pageY
+        })
+
+        events.addListener(document.body, 'touchend', function () {
+            longTap.cancel()
+
+            // swipe
+            if (Math.abs(touch.x1 - touch.x2) > 30 || Math.abs(touch.y1 - touch.y2) > 30) {
+                swipe.schedule()
+            // normal tap
+            } else if ('last' in touch) {
+                tap.schedule()
+            }
+        })
+
+        events.addListener(document.body, 'touchcancel', Gesture.cancelAll)
+        events.addListener(window, 'scroll', Gesture.cancelAll)
+    }
+})
+
+Rye.define('Request', function(){
+
+    var util = Rye.require('Util')
+      , manipulation = Rye.require('Manipulation')
+      , noop = function(){}
+      , escape = encodeURIComponent
+      , accepts = {
+            types  : ['arraybuffer', 'blob', 'document', 'json', 'text']
+          , json   : 'application/json'
+          , xml    : 'application/xml, text/xml'
+          , html   : 'text/html, application/xhtml+xml'
+          , text   : 'text/plain'
+        }
+      , defaults = {
+            method       : 'GET'
+          , url          : window.location.toString()
+          , async        : true
+          , accepts      : accepts
+          , callback     : noop
+          , timeout      : 0
+       // , headers      : {}
+       // , contentType  : null
+       // , data         : null
+       // , responseType : null
+       // , headers      : null
+        }
+
+    function serialize (obj) {
+        var params = []
+        ;(function fn (obj, scope) {
+            util.each(obj, function(value, key){
+                value = obj[key]
+                if (scope) {
+                    key = scope + '[' + (Array.isArray(obj) ? '' : key) + ']'
+                }
+
+                if (util.is(['array', 'object'], value)) {
+                    fn(value, key)
+                } else {
+                    params.push(escape(key) + '=' + escape(value))
+                }
+            })
+        })(obj)
+        return params.join('&').replace(/%20/g, '+')
+    }
+
+    function appendQuery (url, query) {
+        return (url + '&' + query).replace(/[&?]+/, '?')
+    }
+
+    function parseData (options) {
+        if (options.data && (typeof options.data !== 'string')) {
+            options.data = serialize(options.data)
+        }
+        if (options.data && options.method === 'GET') {
+            options.url = appendQuery(options.url, options.data)
+        }
+    }
+
+    function parseMime (mime) {
+        return mime && (mime.split('/')[1] || mime)
+    }
+
+    function parseJSON (xhr) {
+        var data = xhr.response
+        // error of responseType: json
+        if (data === null) {
+            return new Error('Parser Error')
+        }
+        if (typeof data !== 'object') {
+            try {
+                data = JSON.parse(xhr.responseText)
+            } catch (err) {
+                return err
+            }
+        }
+        return data
+    }
+
+    function parseXML (xhr) {
+        var data = xhr.responseXML
+        // parse xml to IE 9
+        if (data.xml && window.DOMParser) {
+            try {
+                var parser = new window.DOMParser()
+                data = parser.parseFromString(data.xml, 'text/xml')
+            } catch (err) {
+                return err
+            }
+        }
+        return data            
+    }
+
+    function request (options, callback) {
+        if (typeof options === 'string') {
+            options = { url: options }
+        }
+        if (!callback) {
+            callback = options.callback || noop
+        }
+
+        var settings = util.extend({}, defaults, options)
+          , xhr = new window.XMLHttpRequest()
+          , mime = settings.accepts[settings.responseType]
+          , abortTimeout = null
+          , headers = {}
+
+        settings.method = settings.method.toUpperCase()
+        parseData(settings)
+
+        // sets request's accept and content type 
+        if (mime) {
+            headers['Accept'] = mime
+            if (xhr.overrideMimeType) {
+                xhr.overrideMimeType(mime.split(',')[0])
+            }
+        }
+        if (settings.contentType || ['POST', 'PUT'].indexOf(settings.method) >= 0) {
+            headers['Content-Type'] =  settings.contentType || 'application/x-www-form-urlencoded'
+        }
+        util.extend(headers, settings.headers || {})
+
+        xhr.onreadystatechange = function(){
+            var err, data
+            if (xhr.readyState != 4 || !xhr.status) {
+                return
+            }
+            xhr.onreadystatechange = noop
+            clearTimeout(abortTimeout)
+
+            if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                xhr.type = settings.responseType || xhr.responseType || parseMime(xhr.getResponseHeader('content-type'))
+                
+                switch (xhr.type) {
+                    case 'json':
+                        data = parseJSON(xhr)
+                        break
+                    case 'xml':
+                        data = parseXML(xhr)
+                        break
+                    default:
+                        data = xhr.responseText
+                }
+
+                if (data instanceof Error) {
+                    err = data, data = undefined
+                }
+
+            } else {
+                err = new Error('Request failed')
+            }
+            callback.call(xhr, err, data, xhr)
+        }
+
+        xhr.ontimeout = function(){
+            callback.call(xhr, new Error('Timeout'), null, xhr)
+        }
+
+        xhr.open(settings.method, settings.url, settings.async)
+
+        // implements fallback to request's abort by timeout
+        if (!('timeout' in xhr) && settings.timeout > 0) {
+            abortTimeout = setTimeout(function(){
+                xhr.onreadystatechange = noop
+                xhr.abort()
+                xhr.ontimeout()
+            }, settings.timeout)
+        }
+
+        // exports settings to xhr and sets headers
+        util.each(settings, function(value, key) {
+            if (key !== 'responseType' || accepts.types.indexOf(value) >= 0) {
+                try { xhr[key] = value } catch (e) {}
+            }
+        })
+        util.each(headers, function(value, name) {
+            xhr.setRequestHeader(name, value)
+        })
+
+        xhr.send(settings.data)
+        return xhr
+    }
+
+    function requestProxy (method, options, callback) {
+        if (typeof options === 'string') {
+            options = { url: options }
+        }
+        options.method = method
+        return request(options, callback)
+    }
+
+    var hideTypes = 'fieldset submit reset button image radio checkbox'.split(' ')
+
+    this.serialize = function () {
+        var form = this.get(0)
+          , fields = {}
+        new Rye(form && form.elements).forEach(function(field){
+            if (!field.disabled && (
+                    field.checked
+                 || (field.type && hideTypes.indexOf(field.type) < 0)
+                )
+            ) {
+                fields[field.name] = manipulation.getValue(field)
+            }
+        })
+        return serialize(fields)
+    }
+
+    // Exported methods
+    // ----------------
+    
+    Rye.request = request
+    Rye.get     = util.curry(requestProxy, 'GET')
+    Rye.post    = util.curry(requestProxy, 'POST')
+
+    // prevents to attach properties on request
+    var exports = request.bind({})
+
+    util.extend(exports, {
+        serialize   : serialize
+      , appendQuery : appendQuery
+      , defaults    : defaults
+      , get         : util.curry(requestProxy, 'GET')
+      , post        : util.curry(requestProxy, 'POST')
+      // https://github.com/mlbli/craft/blob/master/src/ajax.js#L77
+    })
+
+    return exports
+
+})
+(function() {
+
+  (function() {
+    return console.log('Hello Word!');
+  })();
+
+}).call(this);
