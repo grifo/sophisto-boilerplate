@@ -1489,10 +1489,3 @@ Rye.define('Request', function(){
     return exports
 
 })
-(function() {
-
-  (function() {
-    return console.log('Hello Word!');
-  })();
-
-}).call(this);
