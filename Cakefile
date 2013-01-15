@@ -4,6 +4,7 @@ flour = require 'flour'
 task 'dev', ->
     # disable the js minifier
     flour.minifiers.js = null
+    flour.minifiers.css = null
     flour.compilers.styl.compress = false
 
 
